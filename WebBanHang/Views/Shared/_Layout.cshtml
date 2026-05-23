@@ -1,0 +1,184 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Shop Vip Pro</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/WebBanHang.styles.css" asp-append-version="true" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Mang bộ biến màu từ Index ra Layout để dùng chung cho toàn website */
+        :root {
+            --ink: #1a1a2e;
+            --surface: #f8f5f0;
+            --card: #ffffff;
+            --gold: #c9a84c;
+            --gold-lt: #f0e0b0;
+            --muted: #7a7a8c;
+            --danger: #c0392b;
+        }
+
+        body {
+            background: var(--surface);
+            font-family: 'DM Sans', sans-serif;
+            color: var(--ink);
+        }
+
+        /* ── Navbar Styling ── */
+        .custom-navbar {
+            background-color: var(--card);
+            border-bottom: 1px solid #e4ddd4;
+            padding: 1rem 0;
+            box-shadow: 0 4px 24px rgba(26,26,46,.03);
+        }
+
+        .brand-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--ink) !important;
+            letter-spacing: -.02em;
+        }
+
+            .brand-logo span {
+                color: var(--gold);
+            }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--ink) !important;
+            transition: color 0.2s;
+            margin-right: 1rem;
+        }
+
+            .nav-link:hover {
+                color: var(--gold) !important;
+            }
+
+        /* ── Giỏ hàng & Thanh toán ── */
+        .cart-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .cart-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--ink);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+            .cart-btn:hover {
+                color: var(--gold);
+            }
+
+        .cart-badge {
+            position: absolute;
+            top: -6px;
+            right: -12px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            border: 2px solid var(--card);
+        }
+
+        .checkout-btn {
+            background: var(--ink);
+            color: white !important;
+            padding: 0.5rem 1.4rem;
+            border-radius: 50px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.15s;
+        }
+
+            .checkout-btn:hover {
+                background: var(--gold);
+                transform: translateY(-1px);
+            }
+
+        /* ── Footer ── */
+        .custom-footer {
+            background: var(--ink);
+            color: var(--surface);
+            padding: 2rem 0;
+            margin-top: 4rem;
+            border-top: none;
+        }
+
+            .custom-footer a {
+                color: var(--gold);
+                text-decoration: none;
+            }
+
+                .custom-footer a:hover {
+                    text-decoration: underline;
+                }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm custom-navbar mb-4">
+            <div class="container">
+                <a class="navbar-brand brand-logo" asp-area="" asp-controller="Product" asp-action="Index">Shop<span> Vip Pro</span></a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Product" asp-action="Index">Sản Phẩm</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Chính Sách</a>
+                        </li>
+                    </ul>
+
+                    <div class="cart-wrapper">
+                        <a asp-controller="Cart" asp-action="Index" class="cart-btn">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                            Giỏ hàng
+                        </a>
+
+                        <a asp-controller="Cart" asp-action="Checkout" class="checkout-btn">Thanh toán</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="custom-footer text-center">
+        <div class="container">
+            &copy; 2026 - Shop Vip Pro - Thiết kế phong cách - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,283 @@
+﻿@model IEnumerable<WebBanHang.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Thanh Toán";
+}
+
+<style>
+    /* ── Header ── */
+    .checkout-header {
+        padding: 2.5rem 0 1.75rem;
+        border-bottom: 1px solid #e4ddd4;
+        margin-bottom: 2.5rem;
+    }
+
+    .checkout-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--ink);
+    }
+
+        .checkout-title span {
+            color: var(--gold);
+        }
+
+    .checkout-grid {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 3rem;
+        align-items: start;
+    }
+
+    @@media (max-width: 992px) {
+        .checkout-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* ── Form thông tin khách hàng ── */
+    .billing-section {
+        background: #fff;
+        border-radius: 12px;
+        border: 1px solid #ede8e2;
+        box-shadow: 0 4px 24px rgba(26,26,46,.04);
+        padding: 2.5rem;
+    }
+
+    .section-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 1.75rem;
+        color: var(--ink);
+        border-bottom: 2px solid var(--surface);
+        padding-bottom: 0.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--ink);
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e4ddd4;
+        border-radius: 8px;
+        background: var(--surface);
+        font-family: inherit;
+        color: var(--ink);
+        transition: border-color 0.2s;
+    }
+
+        .form-control-custom:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: #fff;
+        }
+
+    /* Phương thức thanh toán */
+    .payment-methods {
+        margin-top: 2rem;
+    }
+
+    .method-option {
+        border: 1px solid #e4ddd4;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        transition: background 0.2s, border-color 0.2s;
+    }
+
+        .method-option:hover {
+            background: var(--surface);
+        }
+
+        .method-option input {
+            margin-right: 1rem;
+            accent-color: var(--gold);
+        }
+
+    .method-title {
+        font-weight: 500;
+        color: var(--ink);
+        font-size: 0.95rem;
+    }
+
+    /* ── Review đơn hàng bên phải ── */
+    .order-review-card {
+        background: #fff;
+        border-radius: 12px;
+        border: 1px solid #ede8e2;
+        box-shadow: 0 4px 24px rgba(26,26,46,.04);
+        padding: 2rem;
+    }
+
+    .mini-product-list {
+        max-height: 240px;
+        overflow-y: auto;
+        margin-bottom: 1.5rem;
+    }
+
+    .mini-product-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f0ebe4;
+        font-size: 0.9rem;
+    }
+
+        .mini-product-item:last-child {
+            border-bottom: none;
+        }
+
+    .mini-name {
+        color: var(--ink);
+        font-weight: 500;
+    }
+
+    .mini-qty {
+        color: var(--muted);
+        font-size: 0.8rem;
+    }
+
+    .mini-price {
+        font-weight: 600;
+        color: var(--ink);
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+        color: var(--muted);
+    }
+
+        .summary-row.total {
+            border-top: 1px solid #f0ebe4;
+            padding-top: 1.25rem;
+            margin-top: 1.25rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+            .summary-row.total .total-price {
+                color: var(--gold);
+            }
+
+    .btn-submit-order {
+        width: 100%;
+        background: var(--ink);
+        color: #fff;
+        border: none;
+        padding: 1rem;
+        border-radius: 50px;
+        font-weight: 500;
+        font-size: 1rem;
+        cursor: pointer;
+        margin-top: 1.5rem;
+        transition: background 0.2s, transform 0.15s;
+    }
+
+        .btn-submit-order:hover {
+            background: var(--gold);
+            color: var(--ink);
+            transform: translateY(-1px);
+        }
+</style>
+
+<div class="container">
+    <div class="checkout-header">
+        <h1 class="checkout-title">Thủ tục <span>Thanh Toán</span></h1>
+    </div>
+
+    <form asp-controller="Cart" asp-action="PlaceOrder" method="post">
+        <div class="checkout-grid">
+            <div class="billing-section">
+                <h3 class="section-title">Thông tin giao hàng</h3>
+
+                <div class="form-group">
+                    <label class="form-label">Họ và tên khách hàng</label>
+                    <input type="text" name="FullName" class="form-control-custom" required placeholder="Nguyễn Văn A" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Số điện thoại nhận hàng</label>
+                    <input type="tel" name="Phone" class="form-control-custom" required placeholder="0901234567" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Địa chỉ nhận hàng chính xác</label>
+                    <input type="text" name="Address" class="form-control-custom" required placeholder="Số nhà, Tên đường, Quận/Huyện, Thành phố" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Ghi chú đơn hàng (Tùy chọn)</label>
+                    <textarea name="Notes" class="form-control-custom" rows="3" placeholder="Ví dụ: Giao giờ hành chính..."></textarea>
+                </div>
+
+                <div class="payment-methods">
+                    <h3 class="section-title" style="margin-top: 2rem;">Phương thức thanh toán</h3>
+
+                    <label class="method-option">
+                        <input type="radio" name="PaymentMethod" value="COD" checked />
+                        <span class="method-title">Thanh toán khi nhận hàng (COD)</span>
+                    </label>
+
+                    <label class="method-option">
+                        <input type="radio" name="PaymentMethod" value="BankTransfer" />
+                        <span class="method-title">Chuyển khoản ngân hàng qua mã QR</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="order-review-card">
+                <h3 class="section-title">Đơn hàng của bạn</h3>
+
+                <div class="mini-product-list">
+                    @foreach (var item in Model)
+                    {
+                        <div class="mini-product-item">
+                            <div>
+                                <span class="mini-name">@item.Product.Name</span>
+                                <span class="mini-qty">x @item.Quantity</span>
+                            </div>
+                            <span class="mini-price">@((item.Product.Price * item.Quantity).ToString("N0")) ₫</span>
+                        </div>
+                    }
+                </div>
+
+                <div class="summary-row">
+                    <span>Tạm tính</span>
+                    <span>@Model.Sum(x => x.Product.Price * x.Quantity).ToString("N0") ₫</span>
+                </div>
+                <div class="summary-row">
+                    <span>Phí vận chuyển</span>
+                    <span>Miễn phí</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Tổng thanh toán</span>
+                    <span class="total-price">@Model.Sum(x => x.Product.Price * x.Quantity).ToString("N0") ₫</span>
+                </div>
+
+                <button type="submit" class="btn-submit-order">Xác nhận đặt hàng</button>
+            </div>
+        </div>
+    </form>
+</div>
