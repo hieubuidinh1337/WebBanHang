@@ -1,11 +1,15 @@
-﻿using WebBanHang.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+using WebBanHang.Data;
+using WebBanHang.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddSingleton<IProductRepository,MockProductRepository>();
-builder.Services.AddScoped<ICategoryRepository,MockCategoryRepository>();
+
+builder.Services.AddScoped<ICategoryRepository, EFCategoryRepository>();
+builder.Services.AddScoped<IProductRepository, EFProductRepository>();
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -13,6 +17,10 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
