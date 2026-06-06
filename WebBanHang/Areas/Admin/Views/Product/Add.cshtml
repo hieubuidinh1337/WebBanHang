@@ -1,0 +1,258 @@
+@model WebBanHang.Models.Product
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Thêm Sản Phẩm";
+}
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap');
+
+    :root {
+        --ink:     #1a1a2e;
+        --surface: #f8f5f0;
+        --card:    #ffffff;
+        --gold:    #c9a84c;
+        --gold-lt: #fdf6e3;
+        --muted:   #7a7a8c;
+        --border:  #e4ddd4;
+        --danger:  #c0392b;
+        --radius:  12px;
+        --shadow:  0 4px 24px rgba(26,26,46,.08);
+    }
+
+    body { background: var(--surface); font-family: 'DM Sans', sans-serif; color: var(--ink); }
+
+    .form-wrapper {
+        max-width: 680px;
+        margin: 2.5rem auto 4rem;
+    }
+
+    /* ── Page header ── */
+    .form-header {
+        margin-bottom: 2rem;
+    }
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        font-size: .82rem;
+        color: var(--muted);
+        text-decoration: none;
+        margin-bottom: 1rem;
+        transition: color .15s;
+    }
+    .back-link:hover { color: var(--gold); }
+    .form-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.9rem;
+        font-weight: 700;
+        color: var(--ink);
+    }
+    .form-title span { color: var(--gold); }
+
+    /* ── Card ── */
+    .form-card {
+        background: var(--card);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        padding: 2.25rem 2.5rem;
+    }
+
+    /* ── Field ── */
+    .field { margin-bottom: 1.4rem; }
+    .field label {
+        display: block;
+        font-size: .8rem;
+        font-weight: 500;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: .45rem;
+    }
+    .field input[type="text"],
+    .field input[type="number"],
+    .field select,
+    .field textarea {
+        width: 100%;
+        padding: .7rem 1rem;
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: .95rem;
+        color: var(--ink);
+        background: #fdfcfb;
+        transition: border-color .2s, box-shadow .2s;
+        outline: none;
+        box-sizing: border-box;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+        border-color: var(--gold);
+        box-shadow: 0 0 0 3px var(--gold-lt);
+    }
+    .field textarea { resize: vertical; min-height: 110px; }
+
+    /* ── File upload ── */
+    .file-zone {
+        border: 2px dashed var(--border);
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: border-color .2s, background .2s;
+        background: #fdfcfb;
+        position: relative;
+    }
+    .file-zone:hover { border-color: var(--gold); background: var(--gold-lt); }
+    .file-zone input[type="file"] {
+        position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .file-zone .fz-icon { font-size: 1.8rem; margin-bottom: .4rem; }
+    .file-zone .fz-label { font-size: .85rem; color: var(--muted); }
+    .file-zone .fz-label strong { color: var(--gold); }
+
+    /* ── Divider ── */
+    .divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 1.75rem 0;
+    }
+
+    /* ── Validation ── */
+    .text-danger { font-size: .78rem; color: var(--danger); margin-top: .3rem; display: block; }
+    .validation-summary-errors ul { margin: 0; padding-left: 1.2rem; }
+    .alert-danger {
+        background: #fdf0ee;
+        border: 1px solid #f5c6c2;
+        border-radius: 8px;
+        padding: .9rem 1.2rem;
+        margin-bottom: 1.4rem;
+        font-size: .875rem;
+        color: var(--danger);
+    }
+
+    /* ── Actions ── */
+    .form-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    .btn-submit {
+        background: var(--ink);
+        color: #fff;
+        border: none;
+        padding: .75rem 2rem;
+        border-radius: 50px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: .9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background .2s, transform .15s;
+        letter-spacing: .03em;
+    }
+    .btn-submit:hover { background: var(--gold); color: var(--ink); transform: translateY(-1px); }
+    .btn-cancel {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: .875rem;
+        transition: color .15s;
+    }
+    .btn-cancel:hover { color: var(--danger); }
+
+    /* ── Section label ── */
+    .section-label {
+        font-size: .75rem;
+        font-weight: 600;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        color: var(--ink);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+    }
+    .section-label::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+    }
+</style>
+
+<div class="container">
+    <div class="form-wrapper">
+        <div class="form-header">
+            <a asp-action="Index" class="back-link">
+                ← Quay lại danh sách
+            </a>
+            <h1 class="form-title">Thêm <span>Sản Phẩm</span> Mới</h1>
+        </div>
+
+        <div class="form-card">
+            <div asp-validation-summary="All" class="alert-danger"></div>
+
+            <form asp-action="Add" enctype="multipart/form-data">
+                <div class="section-label">Thông tin cơ bản</div>
+
+                <div class="field">
+                    <label asp-for="Name">Tên sản phẩm</label>
+                    <input asp-for="Name" type="text" placeholder="Nhập tên sản phẩm..." />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="field">
+                    <label asp-for="Price">Giá (₫)</label>
+                    <input asp-for="Price" type="number" step="1000" placeholder="0" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+
+                <div class="field">
+                    <label asp-for="Description">Mô tả</label>
+                    <textarea asp-for="Description" placeholder="Mô tả chi tiết sản phẩm..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="field">
+                    <label asp-for="CategoryId">Danh mục</label>
+                    <select asp-for="CategoryId" asp-items="ViewBag.Categories">
+                        <option value="">-- Chọn danh mục --</option>
+                    </select>
+                </div>
+
+                <hr class="divider" />
+                <div class="section-label">Hình ảnh</div>
+
+                <div class="field">
+                    <label>Ảnh đại diện</label>
+                    <div class="file-zone">
+                        <input type="file" name="imageUrl" accept="image/*" />
+                        <div class="fz-icon">🖼️</div>
+                        <div class="fz-label"><strong>Chọn file</strong> hoặc kéo thả vào đây</div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Ảnh phụ (có thể chọn nhiều)</label>
+                    <div class="file-zone">
+                        <input type="file" name="imageUrls" accept="image/*" multiple />
+                        <div class="fz-icon">📁</div>
+                        <div class="fz-label"><strong>Chọn nhiều file</strong> hoặc kéo thả vào đây</div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">✦ Thêm sản phẩm</button>
+                    <a asp-action="Index" class="btn-cancel">Hủy bỏ</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

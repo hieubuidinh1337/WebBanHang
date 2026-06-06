@@ -1,0 +1,194 @@
+@page
+@model LogoutModel
+@{
+    ViewData["Title"] = "Đăng xuất";
+}
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap');
+
+    :root {
+        --ink:     #1a1a2e;
+        --surface: #f8f5f0;
+        --card:    #ffffff;
+        --gold:    #c9a84c;
+        --gold-lt: #f0e0b0;
+        --muted:   #7a7a8c;
+        --danger:  #c0392b;
+        --radius:  12px;
+        --shadow:  0 4px 24px rgba(26,26,46,.08);
+    }
+
+    body { background: var(--surface); font-family: 'DM Sans', sans-serif; color: var(--ink); }
+
+    .auth-wrapper {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+
+    .auth-card {
+        background: var(--card);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        border: 1px solid #ede8e2;
+        width: 100%;
+        max-width: 420px;
+        padding: 2.75rem 2.75rem 2.5rem;
+        text-align: center;
+    }
+
+    .logout-icon {
+        width: 64px; height: 64px;
+        background: #faf7f3;
+        border: 2px solid #ede8e2;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.25rem;
+    }
+    .logout-icon svg { width: 30px; height: 30px; stroke: var(--gold); }
+
+    .auth-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.65rem;
+        font-weight: 700;
+        color: var(--ink);
+        margin-bottom: .5rem;
+        letter-spacing: -.02em;
+    }
+    .auth-title span { color: var(--gold); }
+
+    .auth-subtitle {
+        font-size: .875rem;
+        color: var(--muted);
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    /* Nút xác nhận đăng xuất */
+    .btn-logout {
+        display: inline-block;
+        padding: .85rem 2.25rem;
+        background: var(--danger);
+        color: #fff;
+        border: none;
+        border-radius: 50px;
+        font-size: .925rem;
+        font-weight: 500;
+        font-family: 'DM Sans', sans-serif;
+        cursor: pointer;
+        letter-spacing: .03em;
+        transition: background .2s, transform .15s;
+        text-decoration: none;
+        margin-bottom: 1rem;
+    }
+    .btn-logout:hover { background: #a93226; transform: translateY(-1px); color: #fff; }
+
+    /* Nút quay lại */
+    .btn-back {
+        display: inline-block;
+        padding: .75rem 2rem;
+        background: transparent;
+        color: var(--muted);
+        border: 1.5px solid #e4ddd4;
+        border-radius: 50px;
+        font-size: .875rem;
+        font-weight: 500;
+        font-family: 'DM Sans', sans-serif;
+        cursor: pointer;
+        letter-spacing: .03em;
+        transition: all .2s;
+        text-decoration: none;
+        margin-left: .75rem;
+    }
+    .btn-back:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* Thông báo đã đăng xuất thành công */
+    .success-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        background: #f0faf4;
+        border: 1px solid #b7e4c7;
+        color: #276749;
+        border-radius: 50px;
+        padding: .45rem 1rem;
+        font-size: .82rem;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+    }
+    .success-badge svg { width: 15px; height: 15px; stroke: #276749; }
+
+    .link-login {
+        display: block;
+        margin-top: 1.5rem;
+        font-size: .85rem;
+        color: var(--muted);
+        text-decoration: none;
+        transition: color .15s;
+    }
+    .link-login:hover { color: var(--gold); }
+    .link-login strong { color: var(--ink); }
+</style>
+
+<div class="auth-wrapper">
+    <div class="auth-card">
+
+        @if (User.Identity?.IsAuthenticated ?? false)
+        {
+            <!-- Người dùng đang đăng nhập → hiển thị xác nhận đăng xuất -->
+            <div class="logout-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/>
+                </svg>
+            </div>
+
+            <h1 class="auth-title">Đăng <span>xuất</span></h1>
+            <p class="auth-subtitle">Bạn có chắc muốn đăng xuất khỏi hệ thống không?<br/>Mọi phiên làm việc hiện tại sẽ kết thúc.</p>
+
+            <form asp-area="Identity"
+                  asp-page="/Account/Logout"
+                  asp-route-returnUrl="@Url.Page("/", new { area = "" })"
+                  method="post">
+                <button type="submit" class="btn-logout">
+                    Xác nhận đăng xuất
+                </button>
+                <a href="javascript:history.back()" class="btn-back">Quay lại</a>
+            </form>
+        }
+        else
+        {
+            <!-- Đã đăng xuất thành công -->
+            <div class="logout-icon" style="background:#f0faf4; border-color:#b7e4c7;">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="stroke:#276749;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+
+            <h1 class="auth-title">Tạm <span>biệt!</span></h1>
+
+            <div class="success-badge">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>
+                Đăng xuất thành công
+            </div>
+
+            <p class="auth-subtitle">Bạn đã đăng xuất an toàn khỏi hệ thống.<br/>Hẹn gặp lại bạn lần sau!</p>
+
+            <a asp-area="Identity" asp-page="/Account/Login" class="btn-logout" style="display:inline-block; background:var(--ink);">
+                Đăng nhập lại
+            </a>
+
+            <a class="link-login" asp-area="" asp-controller="Home" asp-action="Index">
+                Hoặc <strong>về trang chủ</strong>
+            </a>
+        }
+
+    </div>
+</div>

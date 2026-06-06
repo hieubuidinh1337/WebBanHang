@@ -1,39 +1,58 @@
-﻿using WebBanHang.Repositories;
+using Microsoft.EntityFrameworkCore;
+using WebBanHang.Data;
+using WebBanHang.Repositories;
+using Microsoft.AspNetCore.Identity;
+using WebBanHang.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddSingleton<IProductRepository,MockProductRepository>();
-builder.Services.AddScoped<ICategoryRepository,MockCategoryRepository>();
+
+builder.Services.AddScoped<ICategoryRepository, EFCategoryRepository>();
+builder.Services.AddScoped<IProductRepository, EFProductRepository>();
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Giỏ hàng sẽ lưu trong 30 phút nếu không thao tác
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddDefaultTokenProviders()
+    .AddDefaultUI()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddRazorPages();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (false)
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+    app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseSession();
-
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapRazorPages();
+
+// ✅ Route Area Admin — phải đứng TRƯỚC route default
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Product}/{action=Index}/{id?}");
+
+// ✅ Route mặc định → HomeController (public, không cần login)
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Product}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
