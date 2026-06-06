@@ -1,0 +1,202 @@
+@model WebBanHang.Models.Product
+
+@{
+    ViewData["Title"] = "Xóa Sản Phẩm";
+}
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap');
+
+    :root {
+        --ink:     #1a1a2e;
+        --surface: #f8f5f0;
+        --card:    #ffffff;
+        --gold:    #c9a84c;
+        --muted:   #7a7a8c;
+        --border:  #e4ddd4;
+        --danger:  #c0392b;
+        --danger-lt: #fdf0ee;
+        --danger-bd: #f5c6c2;
+        --radius:  12px;
+        --shadow:  0 4px 24px rgba(26,26,46,.08);
+    }
+
+    body { background: var(--surface); font-family: 'DM Sans', sans-serif; color: var(--ink); }
+
+    .del-wrapper {
+        max-width: 520px;
+        margin: 4rem auto;
+        text-align: center;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        font-size: .82rem;
+        color: var(--muted);
+        text-decoration: none;
+        margin-bottom: 2rem;
+        transition: color .15s;
+    }
+    .back-link:hover { color: var(--gold); }
+
+    /* ── Warning icon ── */
+    .warn-icon {
+        width: 72px;
+        height: 72px;
+        background: var(--danger-lt);
+        border: 2px solid var(--danger-bd);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin: 0 auto 1.5rem;
+    }
+
+    .del-heading {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--ink);
+        margin-bottom: .6rem;
+    }
+    .del-sub {
+        font-size: .9rem;
+        color: var(--muted);
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    /* ── Product preview card ── */
+    .preview-card {
+        background: var(--card);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        padding: 1.5rem 1.75rem;
+        text-align: left;
+        margin-bottom: 2rem;
+        display: flex;
+        gap: 1.25rem;
+        align-items: center;
+    }
+    .preview-thumb {
+        width: 80px;
+        height: 80px;
+        border-radius: 10px;
+        object-fit: cover;
+        background: #f0ebe4;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: #c5bdb4;
+        overflow: hidden;
+    }
+    .preview-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .preview-info { flex: 1; }
+    .preview-name {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: .3rem;
+    }
+    .preview-price {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--gold);
+        margin-bottom: .3rem;
+    }
+    .preview-desc {
+        font-size: .8rem;
+        color: var(--muted);
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* ── Actions ── */
+    .del-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+    .btn-confirm-del {
+        background: var(--danger);
+        color: #fff;
+        border: none;
+        padding: .75rem 2rem;
+        border-radius: 50px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: .9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background .2s, transform .15s;
+        letter-spacing: .03em;
+    }
+    .btn-confirm-del:hover { background: #a93226; transform: translateY(-1px); }
+    .btn-cancel {
+        display: inline-flex;
+        align-items: center;
+        background: var(--card);
+        color: var(--ink);
+        padding: .75rem 1.75rem;
+        border-radius: 50px;
+        font-size: .875rem;
+        font-weight: 500;
+        text-decoration: none;
+        border: 1.5px solid var(--border);
+        transition: border-color .2s, background .2s;
+    }
+    .btn-cancel:hover { border-color: var(--ink); background: #f5f0eb; }
+</style>
+
+<div class="container">
+    <div class="del-wrapper">
+        <a asp-action="Index" class="back-link">← Quay lại danh sách</a>
+
+        <div class="warn-icon">⚠️</div>
+        <h1 class="del-heading">Xác nhận xóa sản phẩm</h1>
+        <p class="del-sub">
+            Hành động này không thể hoàn tác.<br>
+            Bạn có chắc chắn muốn xóa sản phẩm sau không?
+        </p>
+
+        <!-- Preview -->
+        <div class="preview-card">
+            <div class="preview-thumb">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" alt="@Model.Name" />
+                }
+                else
+                {
+                    <span>🛍️</span>
+                }
+            </div>
+            <div class="preview-info">
+                <div class="preview-name">@Model.Name</div>
+                <div class="preview-price">@Model.Price.ToString("N0") ₫</div>
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <div class="preview-desc">@Model.Description</div>
+                }
+            </div>
+        </div>
+
+        <!-- Confirm form -->
+        <form asp-action="DeleteConfirmed" method="post">
+            <input type="hidden" asp-for="Id" />
+            <div class="del-actions">
+                <a asp-action="Index" class="btn-cancel">Hủy bỏ</a>
+                <button type="submit" class="btn-confirm-del">🗑 Xác nhận xóa</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,274 @@
+@model WebBanHang.Models.Product
+
+@{
+    ViewData["Title"] = "Cập Nhật Sản Phẩm";
+}
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap');
+
+    :root {
+        --ink:     #1a1a2e;
+        --surface: #f8f5f0;
+        --card:    #ffffff;
+        --gold:    #c9a84c;
+        --gold-lt: #fdf6e3;
+        --muted:   #7a7a8c;
+        --border:  #e4ddd4;
+        --danger:  #c0392b;
+        --radius:  12px;
+        --shadow:  0 4px 24px rgba(26,26,46,.08);
+    }
+
+    body { background: var(--surface); font-family: 'DM Sans', sans-serif; color: var(--ink); }
+
+    .form-wrapper { max-width: 680px; margin: 2.5rem auto 4rem; }
+
+    .back-link {
+        display: inline-flex; align-items: center; gap: .4rem;
+        font-size: .82rem; color: var(--muted); text-decoration: none;
+        margin-bottom: 1rem; transition: color .15s;
+    }
+    .back-link:hover { color: var(--gold); }
+
+    .form-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.9rem; font-weight: 700; color: var(--ink); margin-bottom: 1.75rem;
+    }
+    .form-title span { color: var(--gold); }
+
+    .form-card {
+        background: var(--card); border-radius: var(--radius);
+        box-shadow: var(--shadow); border: 1px solid var(--border);
+        padding: 2.25rem 2.5rem;
+    }
+
+    .edit-badge {
+        display: inline-flex; align-items: center; gap: .4rem;
+        background: #fff8e6; border: 1px solid #f0d080; border-radius: 50px;
+        font-size: .75rem; font-weight: 600; color: #9a7020;
+        padding: .25rem .8rem; margin-bottom: 1.5rem;
+        letter-spacing: .04em; text-transform: uppercase;
+    }
+
+    .section-label {
+        font-size: .75rem; font-weight: 600; letter-spacing: .1em;
+        text-transform: uppercase; color: var(--ink);
+        margin-bottom: 1rem; display: flex; align-items: center; gap: .6rem;
+    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .field { margin-bottom: 1.4rem; }
+    .field label {
+        display: block; font-size: .8rem; font-weight: 500;
+        letter-spacing: .08em; text-transform: uppercase;
+        color: var(--muted); margin-bottom: .45rem;
+    }
+    .field input[type="text"],
+    .field input[type="number"],
+    .field select,
+    .field textarea {
+        width: 100%; padding: .7rem 1rem;
+        border: 1.5px solid var(--border); border-radius: 8px;
+        font-family: 'DM Sans', sans-serif; font-size: .95rem;
+        color: var(--ink); background: #fdfcfb;
+        transition: border-color .2s, box-shadow .2s;
+        outline: none; box-sizing: border-box;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus {
+        border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-lt);
+    }
+    .field textarea { resize: vertical; min-height: 110px; }
+
+    /* ── Current image preview ── */
+    .img-preview-wrap { margin-bottom: .75rem; }
+    .img-preview-label {
+        font-size: .75rem; color: var(--muted); margin-bottom: .4rem;
+        display: block; letter-spacing: .04em;
+    }
+    .img-preview {
+        display: flex; gap: .5rem; flex-wrap: wrap; align-items: center;
+    }
+    .img-preview img {
+        width: 72px; height: 72px; object-fit: cover;
+        border-radius: 8px; border: 2px solid var(--border);
+    }
+    .img-preview .no-img {
+        width: 72px; height: 72px; border-radius: 8px;
+        background: #f0ebe4; display: flex; align-items: center;
+        justify-content: center; font-size: 1.6rem; color: #c5bdb4;
+        border: 2px dashed var(--border);
+    }
+    .img-badge {
+        font-size: .7rem; background: #e8f5e9; color: #2e7d32;
+        border-radius: 4px; padding: .15rem .5rem; font-weight: 500;
+    }
+
+    /* ── File upload zone ── */
+    .file-zone {
+        border: 2px dashed var(--border); border-radius: 8px;
+        padding: 1.25rem; text-align: center; cursor: pointer;
+        transition: border-color .2s, background .2s;
+        background: #fdfcfb; position: relative;
+    }
+    .file-zone:hover { border-color: var(--gold); background: var(--gold-lt); }
+    .file-zone input[type="file"] {
+        position: absolute; inset: 0; opacity: 0;
+        cursor: pointer; width: 100%; height: 100%;
+    }
+    .file-zone .fz-icon { font-size: 1.5rem; margin-bottom: .25rem; }
+    .file-zone .fz-label { font-size: .82rem; color: var(--muted); }
+    .file-zone .fz-label strong { color: var(--gold); }
+    .file-hint { font-size: .75rem; color: var(--muted); margin-top: .4rem; }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 1.75rem 0; }
+
+    .text-danger { font-size: .78rem; color: var(--danger); margin-top: .3rem; display: block; }
+    .alert-danger {
+        background: #fdf0ee; border: 1px solid #f5c6c2;
+        border-radius: 8px; padding: .9rem 1.2rem;
+        margin-bottom: 1.4rem; font-size: .875rem; color: var(--danger);
+    }
+
+    .form-actions { display: flex; align-items: center; gap: 1rem; margin-top: 2rem; }
+    .btn-submit {
+        background: var(--gold); color: var(--ink); border: none;
+        padding: .75rem 2rem; border-radius: 50px;
+        font-family: 'DM Sans', sans-serif; font-size: .9rem;
+        font-weight: 600; cursor: pointer;
+        transition: background .2s, transform .15s; letter-spacing: .03em;
+    }
+    .btn-submit:hover { background: #b8922e; color: #fff; transform: translateY(-1px); }
+    .btn-cancel { color: var(--muted); text-decoration: none; font-size: .875rem; transition: color .15s; }
+    .btn-cancel:hover { color: var(--danger); }
+</style>
+
+<div class="container">
+    <div class="form-wrapper">
+        <a asp-action="Index" class="back-link">← Quay lại danh sách</a>
+        <h1 class="form-title">Cập nhật <span>Sản Phẩm</span></h1>
+
+        <div class="form-card">
+            <div class="edit-badge">✏️ Chế độ chỉnh sửa — #@Model.Id</div>
+
+            <div asp-validation-summary="ModelOnly" class="alert-danger"></div>
+
+            <form asp-action="Update" enctype="multipart/form-data">
+                <input type="hidden" asp-for="Id" />
+
+                <!-- ── Thông tin cơ bản ── -->
+                <div class="section-label">Thông tin cơ bản</div>
+
+                <div class="field">
+                    <label asp-for="Name">Tên sản phẩm</label>
+                    <input asp-for="Name" type="text" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="field">
+                    <label asp-for="Price">Giá (₫)</label>
+                    <input asp-for="Price" type="number" step="1000" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+
+                <div class="field">
+                    <label asp-for="Description">Mô tả</label>
+                    <textarea asp-for="Description"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="field">
+                    <label asp-for="CategoryId">Danh mục</label>
+                    <select asp-for="CategoryId" asp-items="ViewBag.Categories">
+                        <option value="">-- Chọn danh mục --</option>
+                    </select>
+                </div>
+
+                <hr class="divider" />
+
+                <!-- ── Hình ảnh ── -->
+                <div class="section-label">Hình ảnh</div>
+
+                <!-- Ảnh đại diện hiện tại -->
+                <div class="field">
+                    <label>Ảnh đại diện</label>
+
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <div class="img-preview-wrap">
+                            <span class="img-preview-label">Ảnh hiện tại</span>
+                            <div class="img-preview">
+                                <img src="@Model.ImageUrl" alt="Ảnh đại diện" />
+                                <span class="img-badge">✓ Đang dùng</span>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="file-zone">
+                        <input type="file" name="imageUrl" accept="image/*" id="mainImgInput" />
+                        <div class="fz-icon">🖼️</div>
+                        <div class="fz-label">
+                            <strong>Chọn ảnh mới</strong> để thay thế
+                        </div>
+                    </div>
+                    <div class="file-hint" id="mainImgName">Bỏ trống nếu muốn giữ ảnh hiện tại</div>
+                </div>
+
+                <!-- Ảnh phụ hiện tại -->
+                <div class="field">
+                    <label>Ảnh phụ</label>
+
+                    @if (Model.ImageUrls != null && Model.ImageUrls.Any())
+                    {
+                        <div class="img-preview-wrap">
+                            <span class="img-preview-label">Ảnh phụ hiện tại</span>
+                            <div class="img-preview">
+                                @foreach (var url in Model.ImageUrls)
+                                {
+                                    <img src="@url" alt="Ảnh phụ" />
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <div class="file-zone">
+                        <input type="file" name="imageUrls" accept="image/*" multiple id="extraImgInput" />
+                        <div class="fz-icon">📁</div>
+                        <div class="fz-label">
+                            <strong>Chọn ảnh mới</strong> (có thể chọn nhiều)
+                        </div>
+                    </div>
+                    <div class="file-hint" id="extraImgName">Bỏ trống nếu muốn giữ ảnh hiện tại</div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">💾 Lưu thay đổi</button>
+                    <a asp-action="Index" class="btn-cancel">Hủy bỏ</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Hiển thị tên file khi chọn ảnh đại diện
+        document.getElementById('mainImgInput').addEventListener('change', function () {
+            const hint = document.getElementById('mainImgName');
+            hint.textContent = this.files.length > 0
+                ? '📎 ' + this.files[0].name
+                : 'Bỏ trống nếu muốn giữ ảnh hiện tại';
+            hint.style.color = this.files.length > 0 ? '#c9a84c' : '';
+        });
+
+        // Hiển thị tên file khi chọn ảnh phụ
+        document.getElementById('extraImgInput').addEventListener('change', function () {
+            const hint = document.getElementById('extraImgName');
+            hint.textContent = this.files.length > 0
+                ? '📎 Đã chọn ' + this.files.length + ' ảnh'
+                : 'Bỏ trống nếu muốn giữ ảnh hiện tại';
+            hint.style.color = this.files.length > 0 ? '#c9a84c' : '';
+        });
+    </script>
+}
